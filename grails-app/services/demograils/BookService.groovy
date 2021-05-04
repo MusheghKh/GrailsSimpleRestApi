@@ -5,10 +5,6 @@ import grails.gorm.transactions.Transactional
 @Transactional
 class BookService {
 
-    def serviceMethod() {
-
-    }
-
     def list(def params, def request) {
         def criteria = Book.createCriteria()
         def result = criteria.list(max: params.max, offset: params.offset) {

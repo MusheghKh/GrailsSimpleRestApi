@@ -5,10 +5,6 @@ import grails.gorm.transactions.Transactional
 @Transactional
 class BookAuthorService {
 
-    def serviceMethod() {
-
-    }
-
     def list(def params, def request) {
         def bookId = params.bookId
 
