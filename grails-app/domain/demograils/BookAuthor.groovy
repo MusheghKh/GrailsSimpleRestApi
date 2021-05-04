@@ -8,7 +8,6 @@ class BookAuthor {
     static belongsTo = [book: Book]
 
     static constraints = {
-        id nullable: false
-        name blank: false
+        name blank: false, size: 1..100
     }
 }

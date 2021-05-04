@@ -3,23 +3,30 @@ package demograils
 class BootStrap {
 
     def init = { servletContext ->
-        def book1 = new Book(name: "book1")
-        def book2 = new Book(name: "book2")
-        def book3 = new Book(name: "book3")
+        if (Book.count < 1) {
+            List<Book> books = []
+            (1..100).each {
+                books.add(new Book(name: "book$it"))
+            }
 
-        100.times {
-            def author = new BookAuthor(name: "book1 author$it")
-            book1.addToAuthors(author).save()
-        }
-        100.times {
-            def author = new BookAuthor(name: "book2 author$it")
-            book2.addToAuthors(author).save()
-        }
-        100.times {
-            def author = new BookAuthor(name: "book3 author$it")
-            book3.addToAuthors(author).save()
+            books.eachWithIndex { book, index ->
+                (1..100).each {
+                    def author = new BookAuthor(name: "book${index + 1} author$it")
+                    book.addToAuthors(author)
+                }
+
+            }
+            books.each {
+                it.save()
+            }
         }
     }
     def destroy = {
+        if (Book.count > 0) {
+            Book.deleteAll()
+        }
+        if (BookAuthor.count > 0) {
+            BookAuthor.deleteAll()
+        }
     }
 }
