@@ -15,6 +15,8 @@ class BookController extends RestfulController {
 
     @Override
     def index() {
+        params.max = params.max ?: 10
+        params.offset = params.offset ?: 0
         respond bookService.list(params, request)
     }
 

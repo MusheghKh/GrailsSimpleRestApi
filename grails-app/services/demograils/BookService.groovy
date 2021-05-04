@@ -10,7 +10,11 @@ class BookService {
     }
 
     def list(def params, def request) {
-        return Book.findAll()
+        def criteria = Book.createCriteria()
+        def result = criteria.list(max: params.max, offset: params.offset) {
+
+        }
+        return result
     }
 
     def single(def params, def request) {

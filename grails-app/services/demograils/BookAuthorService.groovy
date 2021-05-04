@@ -11,9 +11,14 @@ class BookAuthorService {
 
     def list(def params, def request) {
         def bookId = params.bookId
-        return BookAuthor.where {
-            book.id == bookId
-        }.list()
+
+        def criteria = BookAuthor.createCriteria()
+
+        def result = criteria.list(max: params.max, offset: params.offset) {
+            eq("book.id", Long.parseLong(bookId))
+        }
+
+        return result
     }
 
     def single(def params, def request) {
@@ -22,10 +27,8 @@ class BookAuthorService {
 
         def criteria = BookAuthor.createCriteria()
         def result = criteria.get {
-            and {
-                eq("book.id", Long.parseLong(bookId))
-                eq('id', Long.parseLong(authorId))
-            }
+            eq("book.id", Long.parseLong(bookId))
+            eq('id', Long.parseLong(authorId))
         }
         return result
     }
