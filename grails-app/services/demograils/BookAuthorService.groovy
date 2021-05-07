@@ -16,7 +16,7 @@ class BookAuthorService {
         if (params.offset < 0) {
             throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
         }
-        def bookId = params.bookId
+        Long bookId = getLongBookId(params)
 
         def criteria = BookAuthor.createCriteria()
 
@@ -28,13 +28,8 @@ class BookAuthorService {
     }
 
     def single(def params, def request) {
-        Long bookId = Long.parseLong(params.bookId)
-        Long authorId
-        try {
-            authorId = Long.parseLong(params?.id)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("bookAuthor.author_id_must_be_a_number", null, Locale.getDefault()))
-        }
+        Long bookId = getLongBookId(params)
+        Long authorId = getLongAuthorId(params)
 
         def criteria = BookAuthor.createCriteria()
         def result = criteria.get {
@@ -48,7 +43,7 @@ class BookAuthorService {
     }
 
     def save(def params, def request) {
-        def bookId = params.bookId
+        def bookId = getLongBookId(params.bookId)
         def book = Book.get(bookId)
         if (book == null) {
             throw new NotFoundException(messageSource.getMessage("book.book_with_id_not_found", [bookId] as Object[], Locale.getDefault()))
@@ -80,17 +75,28 @@ class BookAuthorService {
     }
 
     private BookAuthor getBookAuthor(def params) {
-        Long authorId
-        try {
-            authorId = Long.parseLong(params?.id)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("params.id_must_be_a_number", null, Locale.getDefault()))
-        }
+        Long authorId = getLongAuthorId(params)
 
         def authorInstance = BookAuthor.get(authorId)
         if (authorInstance == null) {
             throw new NotFoundException(messageSource.getMessage("bookAuthor.author_with_id_not_found", [authorId] as Object[], Locale.getDefault()))
         }
         return authorInstance
+    }
+
+    private getLongBookId(def params) {
+        try {
+            return Long.parseLong(params.bookId)
+        } catch(NumberFormatException ignored) {
+            throw new BadRequestException(messageSource.getMessage("bookAuthor.book_id_must_be_a_number", null, Locale.getDefault()))
+        }
+    }
+
+    private getLongAuthorId(def params) {
+        try {
+            return Long.parseLong(params.authorId)
+        } catch(NumberFormatException ignored) {
+            throw new BadRequestException(messageSource.getMessage("bookAuthor.author_id_must_be_a_number", null, Locale.getDefault()))
+        }
     }
 }

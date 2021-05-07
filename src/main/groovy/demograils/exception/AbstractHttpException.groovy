@@ -20,6 +20,6 @@ abstract class AbstractHttpException extends RuntimeException{
     }
 
     JSON getJson() {
-        return [code: getCode(), message: message]
+        [code: getCode(), message: message] as JSON
     }
 }

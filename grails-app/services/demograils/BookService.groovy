@@ -23,12 +23,7 @@ class BookService {
     }
 
     def single(def params, def request) {
-        Long id
-        try {
-            id = Long.parseLong(params?.id)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("params.id_must_be_a_number", null, Locale.getDefault()))
-        }
+        Long id = getLongId(params)
         def book = Book.findById(id)
         if (book == null) {
             throw new NotFoundException(messageSource.getMessage("book.book_with_id_not_found", [id] as Object[], Locale.getDefault()))
@@ -62,17 +57,20 @@ class BookService {
     }
 
     private Book getBookInstance(def params) {
-        Long id
-        try {
-            id = Long.parseLong(params?.id)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("params.id_must_be_a_number", null, Locale.getDefault()))
-        }
+        Long id = getLongId(params)
 
         def bookInstance = Book.get(id)
         if (bookInstance == null) {
             throw new NotFoundException(messageSource.getMessage("book.book_with_id_not_found", [id] as Object[], Locale.getDefault()))
         }
         return bookInstance
+    }
+
+    private Long getLongId(def params) {
+        try {
+            return Long.parseLong(params?.id)
+        } catch(NumberFormatException ignored) {
+            throw new BadRequestException(messageSource.getMessage("params.id_must_be_a_number", null, Locale.getDefault()))
+        }
     }
 }
