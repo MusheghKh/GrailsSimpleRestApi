@@ -1,5 +1,8 @@
 package demograils
 
+import demograils.exception.BadRequestException
+import demograils.exception.NotFoundException
+
 class UrlMappings {
 
     static mappings = {
@@ -16,6 +19,8 @@ class UrlMappings {
         "/books/$bookId/authors/$id"(controller: "bookAuthor", action: "delete", method: "DELETE")
 
         "/"(controller: 'application', action:'index')
+        "500"(controller: "error", action: "badRequest", exception: BadRequestException)
+        "500"(controller: "error", action: "notFound", exception: NotFoundException)
         "500"(view: '/error')
         "404"(view: '/notFound')
     }
