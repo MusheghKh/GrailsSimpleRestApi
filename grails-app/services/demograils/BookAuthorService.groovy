@@ -11,17 +11,21 @@ class BookAuthorService {
     def messageSource
 
     def list(def params, def request) throws AbstractHttpException {
-        Long max
-        Long offset
-        try {
-            max = Long.parseLong(params.max)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
+        def max = params.max
+        def offset = params.offset
+        if (max instanceof String) {
+            try {
+                max = Integer.parseInt(max)
+            } catch(NumberFormatException ignored) {
+                throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
+            }
         }
-        try {
-            offset = Long.parseLong(params.max)
-        } catch(NumberFormatException ignored) {
-            throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
+        if (offset instanceof String) {
+            try {
+                offset = Integer.parseInt(offset)
+            } catch(NumberFormatException ignored) {
+                throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
+            }
         }
         if (max < 0) {
             throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
