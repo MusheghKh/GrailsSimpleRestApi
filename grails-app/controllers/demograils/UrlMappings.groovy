@@ -20,7 +20,6 @@ class UrlMappings {
         "/books/$bookId/authors/$id"(controller: "bookAuthor", action: "delete", method: "DELETE")
 
         "/"(controller: 'application', action:'index')
-        "500"(controller: "error", action: "handleAbstractHttpException", exception: AbstractHttpException)
         "500"(view: '/error')
         "404"(view: '/notFound')
     }

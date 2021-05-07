@@ -1,5 +1,6 @@
 package demograils
 
+import demograils.exception.AbstractHttpException
 import demograils.exception.BadRequestException
 import demograils.exception.NotFoundException
 import grails.gorm.transactions.Transactional
@@ -9,11 +10,23 @@ class BookAuthorService {
 
     def messageSource
 
-    def list(def params, def request) {
-        if (params.max < 0) {
+    def list(def params, def request) throws AbstractHttpException {
+        Long max
+        Long offset
+        try {
+            max = Long.parseLong(params.max)
+        } catch(NumberFormatException ignored) {
             throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
         }
-        if (params.offset < 0) {
+        try {
+            offset = Long.parseLong(params.max)
+        } catch(NumberFormatException ignored) {
+            throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
+        }
+        if (max < 0) {
+            throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
+        }
+        if (offset < 0) {
             throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
         }
         Long bookId = getLongBookId(params)
@@ -27,7 +40,7 @@ class BookAuthorService {
         return result
     }
 
-    def single(def params, def request) {
+    def single(def params, def request) throws AbstractHttpException {
         Long bookId = getLongBookId(params)
         Long authorId = getLongAuthorId(params)
 
@@ -42,7 +55,7 @@ class BookAuthorService {
         return result
     }
 
-    def save(def params, def request) {
+    def save(def params, def request) throws AbstractHttpException {
         def bookId = getLongBookId(params.bookId)
         def book = Book.get(bookId)
         if (book == null) {
@@ -57,7 +70,7 @@ class BookAuthorService {
         return authorInstance
     }
 
-    def update(def params, def request) {
+    def update(def params, def request) throws AbstractHttpException {
         def authorInstance = getBookAuthor(params)
         def authorJson = request.JSON
         authorInstance.properties = authorJson
@@ -67,14 +80,14 @@ class BookAuthorService {
         return authorInstance
     }
 
-    def delete(def params, def request) {
+    def delete(def params, def request) throws AbstractHttpException {
         def authorInstance = getBookAuthor(params)
         authorInstance = authorInstance.delete()
 
         return authorInstance
     }
 
-    private BookAuthor getBookAuthor(def params) {
+    private BookAuthor getBookAuthor(def params) throws AbstractHttpException {
         Long authorId = getLongAuthorId(params)
 
         def authorInstance = BookAuthor.get(authorId)
@@ -84,7 +97,7 @@ class BookAuthorService {
         return authorInstance
     }
 
-    private getLongBookId(def params) {
+    private getLongBookId(def params) throws AbstractHttpException {
         try {
             return Long.parseLong(params.bookId)
         } catch(NumberFormatException ignored) {
@@ -92,7 +105,7 @@ class BookAuthorService {
         }
     }
 
-    private getLongAuthorId(def params) {
+    private getLongAuthorId(def params) throws AbstractHttpException {
         try {
             return Long.parseLong(params.authorId)
         } catch(NumberFormatException ignored) {

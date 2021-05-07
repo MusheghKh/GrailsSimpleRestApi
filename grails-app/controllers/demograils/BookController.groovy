@@ -1,6 +1,6 @@
 package demograils
 
-
+import demograils.exception.AbstractHttpException
 import grails.rest.*
 import grails.converters.*
 
@@ -17,29 +17,47 @@ class BookController extends RestfulController {
     def index() {
         params.max = params.max ?: 10
         params.offset = params.offset ?: 0
-        respond bookService.list(params, request)
+        try {
+            respond bookService.list(params, request)
+        } catch(AbstractHttpException e) {
+            response.status = e.code
+            render e.json
+        }
     }
 
     @Override
     def show() {
-        respond bookService.single(params, request)
+        try {
+            respond bookService.single(params, request)
+        } catch(AbstractHttpException e) {
+            response.status = e.code
+            render e.json
+        }
     }
 
     @Override
     def save() {
         def book = bookService.save(params, request)
-        respond super.save()
+        respond book
     }
 
     @Override
     def update() {
-        def book = bookService.update(params, request)
-        respond book
+        try {
+            respond bookService.update(params, request)
+        } catch(AbstractHttpException e) {
+            response.status = e.code
+            render e.json
+        }
     }
 
     @Override
     def delete() {
-        def book = bookService.delete(params, request)
-        respond book
+        try {
+            respond bookService.delete(params, request)
+        } catch(AbstractHttpException e) {
+            response.status = e.code
+            render e.json
+        }
     }
 }
