@@ -1,14 +1,11 @@
 package demograils
 
-import demograils.exception.AbstractHttpException
-import grails.rest.*
-import grails.converters.*
+class BookAuthorController extends BaseRestfulController {
 
-class BookAuthorController extends RestfulController {
+    static responseFormats = ['json', 'xml']
 
     def bookAuthorService
 
-    static responseFormats = ['json', 'xml']
     BookAuthorController() {
         super(BookAuthor)
     }
@@ -17,51 +14,36 @@ class BookAuthorController extends RestfulController {
     def index() {
         params.max = params.max ?: 10
         params.offset = params.offset ?: 0
-        try {
+        doOrHandleHttpError {
             respond bookAuthorService.list(params, request)
-        } catch(AbstractHttpException e) {
-            response.status = e.code
-            render e.json
         }
     }
 
     @Override
     def show() {
-        try {
+        doOrHandleHttpError {
             respond bookAuthorService.single(params, request)
-        } catch(AbstractHttpException e) {
-            response.status = e.code
-            render e.json
         }
     }
 
     @Override
     def save() {
-        try {
+        doOrHandleHttpError {
             respond bookAuthorService.save(params, request)
-        } catch(AbstractHttpException e) {
-            response.status = e.code
-            render e.json
         }
     }
 
     @Override
     def update() {
-        try {
+        doOrHandleHttpError {
             respond bookAuthorService.update(params, request)
-        } catch(AbstractHttpException e) {
-            response.status = e.code
-            render e.json
         }
     }
 
     @Override
     def delete() {
-        try {
+        doOrHandleHttpError {
             respond bookAuthorService.delete(params, request)
-        } catch(AbstractHttpException e) {
-            response.status = e.code
-            render e.json
         }
     }
 }

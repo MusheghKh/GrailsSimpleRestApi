@@ -6,33 +6,12 @@ import demograils.exception.NotFoundException
 import grails.gorm.transactions.Transactional
 
 @Transactional
-class BookAuthorService {
+class BookAuthorService implements Pagination{
 
     def messageSource
 
     def list(def params, def request) throws AbstractHttpException {
-        def max = params.max
-        def offset = params.offset
-        if (max instanceof String) {
-            try {
-                max = Integer.parseInt(max)
-            } catch(NumberFormatException ignored) {
-                throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
-            }
-        }
-        if (offset instanceof String) {
-            try {
-                offset = Integer.parseInt(offset)
-            } catch(NumberFormatException ignored) {
-                throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
-            }
-        }
-        if (max < 0) {
-            throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
-        }
-        if (offset < 0) {
-            throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
-        }
+        handleParamsForPagination(messageSource, params)
         Long bookId = getLongBookId(params)
 
         def criteria = BookAuthor.createCriteria()
