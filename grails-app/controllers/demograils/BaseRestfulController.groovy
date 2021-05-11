@@ -3,9 +3,9 @@ package demograils
 import demograils.exception.AbstractHttpException
 import grails.rest.RestfulController
 
-class BaseRestfulController extends RestfulController {
+class BaseRestfulController<T> extends RestfulController<T> {
 
-    BaseRestfulController(Class resource) {
+    BaseRestfulController(Class<T> resource) {
         super(resource)
     }
 

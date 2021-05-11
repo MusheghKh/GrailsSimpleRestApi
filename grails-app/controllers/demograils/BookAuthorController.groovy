@@ -1,6 +1,6 @@
 package demograils
 
-class BookAuthorController extends BaseRestfulController {
+class BookAuthorController extends BaseRestfulController<BookAuthor> {
 
     static responseFormats = ['json', 'xml']
 
