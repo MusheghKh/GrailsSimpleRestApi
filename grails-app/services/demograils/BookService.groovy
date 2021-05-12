@@ -11,7 +11,7 @@ class BookService implements Pagination{
     def messageSource
 
     def list(def params, def request) throws AbstractHttpException {
-        handleParamsForPagination(messageSource, params)
+        validateParamsForPagination(messageSource, params)
 
         def criteria = Book.createCriteria()
         def result = criteria.list(max: params.max, offset: params.offset) {}

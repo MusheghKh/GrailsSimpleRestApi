@@ -11,7 +11,7 @@ class BookAuthorService implements Pagination{
     def messageSource
 
     def list(def params, def request) throws AbstractHttpException {
-        handleParamsForPagination(messageSource, params)
+        validateParamsForPagination(messageSource, params)
         Long bookId = getLongBookId(params)
 
         def criteria = BookAuthor.createCriteria()

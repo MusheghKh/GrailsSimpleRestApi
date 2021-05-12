@@ -4,7 +4,7 @@ import demograils.exception.BadRequestException
 
 trait Pagination {
 
-    def handleParamsForPagination(def messageSource, def params) throws BadRequestException {
+    def validateParamsForPagination(def messageSource, def params) throws BadRequestException {
         if (params.max instanceof String) {
             try {
                 params.max = Integer.parseInt(params.max)
