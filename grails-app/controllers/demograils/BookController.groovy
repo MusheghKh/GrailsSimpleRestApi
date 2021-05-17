@@ -13,7 +13,7 @@ class BookController extends BaseRestfulController<Book> {
     @Override
     def index() {
         params.max = params.max ?: 10
-        params.offset = params.offset ?: 0
+        params.page = params.page ?: 0
         doOrHandleHttpError {
             respond bookService.list(params, request)
         }

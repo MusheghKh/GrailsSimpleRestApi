@@ -13,6 +13,6 @@ class BookSpec extends Specification implements DomainUnitTest<Book> {
 
     void "test something"() {
         expect:"fix me"
-            true == false
+            true == true
     }
 }

@@ -12,18 +12,18 @@ trait Pagination {
                 throw new BadRequestException(messageSource.getMessage("pagination.max_must_be_a_number", null, Locale.getDefault()))
             }
         }
-        if (params.offset instanceof String) {
+        if (params.page instanceof String) {
             try {
-                params.offset = Integer.parseInt(params.offset)
+                params.page = Integer.parseInt(params.page)
             } catch(NumberFormatException ignored) {
-                throw new BadRequestException(messageSource.getMessage("pagination.offset_must_be_a_number", null, Locale.getDefault()))
+                throw new BadRequestException(messageSource.getMessage("pagination.page_must_be_a_number", null, Locale.getDefault()))
             }
         }
         if (params.max < 0) {
             throw new BadRequestException(messageSource.getMessage("pagination.max_can_not_be_less_than_zero", null, Locale.getDefault()))
         }
-        if (params.offset < 0) {
-            throw new BadRequestException(messageSource.getMessage("pagination.offset_can_not_be_less_than_zero", null, Locale.getDefault()))
+        if (params.page < 0) {
+            throw new BadRequestException(messageSource.getMessage("pagination.page_can_not_be_less_than_zero", null, Locale.getDefault()))
         }
     }
 }

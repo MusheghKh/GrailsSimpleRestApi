@@ -14,7 +14,7 @@ class BookService implements Pagination{
         validateParamsForPagination(messageSource, params)
 
         def criteria = Book.createCriteria()
-        def result = criteria.list(max: params.max, offset: params.offset) {}
+        def result = criteria.list(max: params.max, offset: params.page * 10) {}
         return result
     }
 
