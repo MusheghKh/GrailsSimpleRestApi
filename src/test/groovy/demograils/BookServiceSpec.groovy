@@ -1,14 +1,18 @@
 package demograils
 
 import demograils.exception.NotFoundException
+import grails.converters.JSON
 import grails.testing.gorm.DataTest
 import grails.testing.services.ServiceUnitTest
+import grails.testing.web.GrailsWebUnitTest
+import org.grails.plugins.testing.GrailsMockHttpServletRequest
 import spock.lang.Specification
 
-class BookServiceSpec extends Specification implements DataTest, ServiceUnitTest<BookService> {
+class BookServiceSpec extends Specification implements GrailsWebUnitTest, DataTest, ServiceUnitTest<BookService> {
 
     def setupSpec() {
         mockDomain Book
+        mockDomain BookAuthor
     }
 
     def setup() {
@@ -80,4 +84,71 @@ class BookServiceSpec extends Specification implements DataTest, ServiceUnitTest
         exception.message == messageSource.getMessage("book.book_with_id_not_found", [params.id] as Object[], Locale.getDefault())
     }
 
+    void "test save Book"() {
+        given: 'book object in httpServletRequest'
+        GrailsMockHttpServletRequest request = new GrailsMockHttpServletRequest()
+        Book requestBook = new Book(name: "some name")
+        request.setJSON(new JSON(requestBook))
+
+        when: 'save Book'
+        Book book = service.save(null, request)
+
+        then: 'book name must be same as in request'
+        book.name == requestBook.name
+    }
+
+    void "update exiting book"() {
+        given: 'book object in httpServletRequest'
+        GrailsMockHttpServletRequest request = new GrailsMockHttpServletRequest()
+        Book requestBook = new Book(name: "some name")
+        request.setJSON(new JSON(requestBook))
+        def params = ["id": "1"]
+
+        when: 'update Book'
+        Book book = service.update(params, request)
+
+        then: 'book name must be same as in request'
+        book.name == requestBook.name
+    }
+
+    void "update book not found"() {
+        given: 'book object in httpServletRequest and params with id'
+        messageSource.addMessage("book.book_with_id_not_found", Locale.getDefault(), "book with id {0} not found")
+
+        GrailsMockHttpServletRequest request = new GrailsMockHttpServletRequest()
+        Book requestBook = new Book(name: "some name")
+        request.setJSON(new JSON(requestBook))
+        def params = ["id": "123"]
+
+        when: 'update Book'
+        Book book = service.update(params, request)
+
+        then: 'book name must be same as in request'
+        NotFoundException exception = thrown(NotFoundException)
+        exception.message == messageSource.getMessage("book.book_with_id_not_found", [params.id] as Object[], Locale.getDefault())
+    }
+
+    void "delete book" () {
+        given: 'params with id'
+        def params = ["id": "2"]
+
+        when: 'delete Book'
+        Book book = service.delete(params, null)
+
+        then: 'no exception is thrown'
+    }
+
+    void "delete book not found"() {
+        given: 'params with id'
+        messageSource.addMessage("book.book_with_id_not_found", Locale.getDefault(), "book with id {0} not found")
+
+        def params = ["id": "234"]
+
+        when: 'delete Book'
+        Book book = service.delete(params, null)
+
+        then: 'book must be not null'
+        NotFoundException exception = thrown(NotFoundException)
+        exception.message == messageSource.getMessage("book.book_with_id_not_found", [params.id] as Object[], Locale.getDefault())
+    }
 }

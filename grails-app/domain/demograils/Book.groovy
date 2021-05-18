@@ -8,7 +8,7 @@ class Book {
     static hasMany = [authors: BookAuthor]
 
     static constraints = {
-        name blank: false, size: 1..100
+        name nullable: false, blank: false, size: 1..100
     }
 
 }

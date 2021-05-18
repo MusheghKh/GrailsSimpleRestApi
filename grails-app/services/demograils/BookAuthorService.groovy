@@ -16,7 +16,7 @@ class BookAuthorService implements Pagination{
 
         def criteria = BookAuthor.createCriteria()
 
-        def result = criteria.list(max: params.max, offset: params.page * 10) {
+        def result = criteria.list(max: params.max, page: params.page * 10) {
             eq("book.id", bookId)
         }
 

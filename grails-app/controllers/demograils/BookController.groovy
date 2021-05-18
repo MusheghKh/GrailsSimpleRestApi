@@ -41,7 +41,8 @@ class BookController extends BaseRestfulController<Book> {
     @Override
     def delete() {
         doOrHandleHttpError {
-            respond bookService.delete(params, request)
+            bookService.delete(params, request)
+            respond([status: 200])
         }
     }
 }

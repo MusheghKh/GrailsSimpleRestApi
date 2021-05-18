@@ -3,7 +3,11 @@ package demograils
 import demograils.exception.AbstractHttpException
 import demograils.exception.BadRequestException
 import demograils.exception.NotFoundException
+import grails.converters.JSON
 import grails.gorm.transactions.Transactional
+import org.grails.web.json.JSONObject
+
+import javax.servlet.http.HttpServletRequest
 
 @Transactional
 class BookService implements Pagination{
@@ -19,25 +23,24 @@ class BookService implements Pagination{
     }
 
     def single(def params, def request) throws AbstractHttpException {
-        Long id = getLongId(params)
-        def book = Book.findById(id)
-        if (book == null) {
-            throw new NotFoundException(messageSource.getMessage("book.book_with_id_not_found", [id] as Object[], Locale.getDefault()))
-        }
-        return book
+        return getBookInstance(params)
     }
 
     def save(def params, def request) {
-        def bookJson = request.JSON
-        def bookInstance = new Book(bookJson)
+        JSONObject bookJson = request.JSON
+        Book bookInstance = new Book(bookJson)
+        bookInstance.id = null
+        bookInstance.authors = Collections.emptySet()
 
         bookInstance = bookInstance.save()
         return bookInstance
     }
 
     def update(def params, def request) throws AbstractHttpException {
-        def bookInstance = getBookInstance(params)
-        def bookJson = request.JSON
+        Book bookInstance = getBookInstance(params)
+        JSONObject bookJson = request.JSON
+        bookJson.put("id", bookInstance.id)
+        bookJson.put("authors", [])
         bookInstance.properties = bookJson
 
         bookInstance = bookInstance.merge()
@@ -47,15 +50,13 @@ class BookService implements Pagination{
     def delete(def params, def request) throws AbstractHttpException {
         def bookInstance = getBookInstance(params)
 
-        bookInstance = bookInstance.delete()
-
-        return bookInstance
+        bookInstance.delete()
     }
 
     private Book getBookInstance(def params) throws AbstractHttpException {
         Long id = getLongId(params)
 
-        def bookInstance = Book.get(id)
+        def bookInstance = Book.findById(id)
         if (bookInstance == null) {
             throw new NotFoundException(messageSource.getMessage("book.book_with_id_not_found", [id] as Object[], Locale.getDefault()))
         }
